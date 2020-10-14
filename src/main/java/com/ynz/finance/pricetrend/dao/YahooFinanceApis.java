@@ -2,13 +2,13 @@ package com.ynz.finance.pricetrend.dao;
 
 import com.ynz.finance.pricetrend.domain.Price;
 import com.ynz.finance.pricetrend.domain.Symbol;
+import com.ynz.finance.pricetrend.utils.CalendarAdapter;
 import org.springframework.stereotype.Component;
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +19,8 @@ public class YahooFinanceApis implements FianceAPI {
 
     @Override
     public Price getPriceBySymbol(Symbol symbol, LocalDate date) throws IOException {
-        Stock stock = YahooFinance.get(symbol.getName(), convert(date));
+        Stock stock = YahooFinance.get(symbol.getName(), CalendarAdapter.of(date).getCalendar());
+
 
         return Price.of(stock.getQuote().getPreviousClose());
     }
@@ -28,7 +29,7 @@ public class YahooFinanceApis implements FianceAPI {
     public Map<Symbol, Price> getPricesBySymbols(List<Symbol> symbols, LocalDate date) throws IOException {
         String[] symbolArray = symbols.stream().map(Symbol::getName).toArray(String[]::new);
 
-        return YahooFinance.get(symbolArray, convert(date))
+        return YahooFinance.get(symbolArray, CalendarAdapter.of(date).getCalendar())
                 .entrySet()
                 .stream()
                 .collect(
@@ -39,10 +40,4 @@ public class YahooFinanceApis implements FianceAPI {
 
     }
 
-    Calendar convert(LocalDate date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.clear();
-        calendar.set(date.getYear(), date.getMonthValue(), date.getDayOfMonth());
-        return calendar;
-    }
 }
