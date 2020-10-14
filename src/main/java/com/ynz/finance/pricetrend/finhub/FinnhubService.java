@@ -26,7 +26,7 @@ public class FinnhubService {
         this.restTemplate = restTemplate;
     }
 
-    public List<StockSymbol> getUSStockSymbol() {
+    public List<StockSymbol> getAllUSStockSymbol() {
         MultiValueMap<String, String> headers = new HttpHeaders();
         headers.add("X-Finnhub-Token", apiKey);
         ResponseEntity<StockSymbol[]> response = restTemplate.exchange(USStockSymbolsURL, HttpMethod.GET, new HttpEntity<>(headers), StockSymbol[].class);
