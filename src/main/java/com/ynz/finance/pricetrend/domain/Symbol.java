@@ -9,7 +9,6 @@ public class Symbol implements Comparable {
     @Override
     public int compareTo(Object o) {
         if (!(o instanceof Symbol)) throw new IllegalArgumentException("o is not Symbol instance");
-
-        return this.name.compareTo(((Symbol)o).getName());
+        return this.name.compareTo(((Symbol) o).getName());
     }
 }

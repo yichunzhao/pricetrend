@@ -5,10 +5,11 @@ import lombok.Data;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Data(staticConstructor = "of")
+@Setter(AccessLevel.NONE)
 public class Price {
-    @Setter(AccessLevel.NONE)
     private final BigDecimal stockPrice;
-
+    private final LocalDate date;
 }

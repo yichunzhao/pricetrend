@@ -6,14 +6,11 @@ import java.time.LocalDate;
 import java.util.Calendar;
 
 @RequiredArgsConstructor(staticName = "of")
-public class CalendarAdapter implements AsCalendar {
-    private final LocalDate localDate;
+public class CalendarAdapter implements AsLocalDate {
+    private final Calendar calendar;
 
     @Override
-    public Calendar getCalendar() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.clear();
-        calendar.set(localDate.getYear(), localDate.getMonthValue(), localDate.getDayOfMonth());
-        return calendar;
+    public LocalDate getLocalDate() {
+        return LocalDate.of(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
     }
 }
