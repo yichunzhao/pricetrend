@@ -1,11 +1,13 @@
 package com.ynz.finance.pricetrend.finhub;
 
+import com.ynz.finance.pricetrend.domain.Symbol;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
@@ -36,6 +38,14 @@ class FinnhubServiceTest {
             );
 
         });
-
     }
+
+    @Test
+    void testGetAllUSStockSymbols() {
+        Map<Symbol, StockSymbol> symbolMap = finnhubService.getUSSymbolStockMap();
+        List<StockSymbol> stockSymbolList = finnhubService.getAllUSStockSymbol();
+        assertThat(symbolMap.size(), is(equalTo(stockSymbolList.size())));
+    }
+
+
 }
