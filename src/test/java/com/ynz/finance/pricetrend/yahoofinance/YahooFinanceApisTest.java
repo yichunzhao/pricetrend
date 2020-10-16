@@ -10,8 +10,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
@@ -42,7 +43,7 @@ class YahooFinanceApisTest {
     }
 
     @Test
-    void whenGetPriceToday_ItReturnsNull() throws IOException {
+    void whenGetPriceToday_ItReturnsPriceSpanWithNullValues() throws IOException {
         Symbol tesla = Symbol.of("TSLA");
         PriceSpanPair price = financeApis.getPriceBySymbol(tesla, LocalDate.now());
 
@@ -54,13 +55,13 @@ class YahooFinanceApisTest {
 
     @Test
     void testGetPricesBySymbols() throws IOException {
-        List<Symbol> symbolList = Arrays.asList(Symbol.of("AAAU"), Symbol.of("AACG"), Symbol.of("AAA"), Symbol.of("AACQU"));
+        Set<Symbol> symbolSet = new HashSet<>(Arrays.asList(Symbol.of("AAAU"), Symbol.of("AACG"), Symbol.of("AAA"), Symbol.of("AACQU")));
 
-        Map<Symbol, PriceSpanPair> spanPairMap = financeApis.getPricesBySymbols(symbolList, LocalDate.now().minusMonths(6L));
+        Map<Symbol, PriceSpanPair> spanPairMap = financeApis.getPricesBySymbols(symbolSet, LocalDate.now().minusMonths(6L));
 
         assertAll(
                 () -> assertThat(spanPairMap, is(notNullValue())),
-                () -> assertThat(spanPairMap.size(), is(symbolList.size())),
+                () -> assertThat(spanPairMap.size(), is(symbolSet.size())),
                 () -> assertThat(spanPairMap.get(Symbol.of("AAAU")), is(instanceOf(PriceSpanPair.class))),
                 () -> assertThat(spanPairMap.get(Symbol.of("AAAU")).getStart().getStockPrice(), is(notNullValue())),
                 () -> assertThat(spanPairMap.get(Symbol.of("AAAU")).getEnd().getStockPrice(), is(notNullValue()))

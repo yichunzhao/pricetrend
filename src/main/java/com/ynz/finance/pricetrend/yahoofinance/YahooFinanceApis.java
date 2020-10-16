@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -50,7 +51,7 @@ public class YahooFinanceApis implements FianceAPI {
     }
 
     @Override
-    public Map<Symbol, PriceSpanPair> getPricesBySymbols(List<Symbol> symbols, LocalDate date) throws IOException {
+    public Map<Symbol, PriceSpanPair> getPricesBySymbols(Set<Symbol> symbols, LocalDate date) throws IOException {
         String[] symbolArray = symbols.stream().map(Symbol::getName).toArray(String[]::new);
 
         return YahooFinance.get(symbolArray, LocalDateAdapter.of(date).toCalendar())
