@@ -19,7 +19,7 @@ class CalendarAdapterTest {
         int expectedMonth = 10;
         int expectedDay = 10;
 
-        Calendar converted = LocalDateAdapter.of(LocalDate.of(expectedYear, expectedMonth, expectedDay)).getCalendar();
+        Calendar converted = LocalDateAdapter.of(LocalDate.of(expectedYear, expectedMonth, expectedDay)).toCalendar();
         assertAll(
                 () -> assertThat(converted, notNullValue()),
                 () -> assertThat(converted, is(instanceOf(Calendar.class))),

@@ -23,7 +23,7 @@ public class YahooFinanceApis implements FianceAPI {
 
     @Override
     public PriceSpanPair getPriceBySymbol(Symbol symbol, LocalDate date) throws IOException {
-        Stock stock = YahooFinance.get(symbol.getName(), LocalDateAdapter.of(date).getCalendar(), Interval.DAILY);
+        Stock stock = YahooFinance.get(symbol.getName(), LocalDateAdapter.of(date).toCalendar(), Interval.DAILY);
         return getPriceSpanPair(stock);
     }
 
@@ -40,8 +40,8 @@ public class YahooFinanceApis implements FianceAPI {
             HistoricalQuote start = historicalQuotes.get(0);
             HistoricalQuote end = historicalQuotes.get(historicalQuotes.size() - 1);
 
-            Price pStart = Price.of(start.getAdjClose(), CalendarAdapter.of(start.getDate()).getLocalDate());
-            Price pEnd = Price.of(end.getAdjClose(), CalendarAdapter.of(end.getDate()).getLocalDate());
+            Price pStart = Price.of(start.getAdjClose(), CalendarAdapter.of(start.getDate()).toLocalDate());
+            Price pEnd = Price.of(end.getAdjClose(), CalendarAdapter.of(end.getDate()).toLocalDate());
 
             return PriceSpanPair.of(pStart, pEnd);
         }
@@ -53,7 +53,7 @@ public class YahooFinanceApis implements FianceAPI {
     public Map<Symbol, PriceSpanPair> getPricesBySymbols(List<Symbol> symbols, LocalDate date) throws IOException {
         String[] symbolArray = symbols.stream().map(Symbol::getName).toArray(String[]::new);
 
-        return YahooFinance.get(symbolArray, LocalDateAdapter.of(date).getCalendar())
+        return YahooFinance.get(symbolArray, LocalDateAdapter.of(date).toCalendar())
                 .entrySet()
                 .stream()
                 .collect(toMap(entry -> Symbol.of(entry.getKey()),
