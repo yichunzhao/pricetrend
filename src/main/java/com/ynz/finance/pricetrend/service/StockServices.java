@@ -1,14 +1,15 @@
 package com.ynz.finance.pricetrend.service;
 
 import com.ynz.finance.pricetrend.domain.Symbol;
-import yahoofinance.Stock;
 
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface StockServices {
-    List<Stock> calMaxPriceGrowthStock(Set<Symbol> symbols, int limit);
+    Map<BigDecimal, Symbol> calMaxPriceGrowthStock(Set<Symbol> symbols, int limit) throws IOException;
 
-    List<Stock> calMaxPriceGrowthStock(Set<Symbol> symbols, LocalDate from, int limit);
+    Map<BigDecimal, Symbol> calMaxPriceGrowthStock(Set<Symbol> symbols, LocalDate from, int limit);
 }
