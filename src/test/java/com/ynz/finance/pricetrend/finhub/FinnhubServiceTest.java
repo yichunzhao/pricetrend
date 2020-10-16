@@ -49,5 +49,4 @@ class FinnhubServiceTest {
         assertThat(symbolMap.size(), is(equalTo(stockSymbolList.size())));
     }
 
-
 }
