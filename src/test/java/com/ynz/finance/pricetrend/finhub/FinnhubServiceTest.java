@@ -36,7 +36,6 @@ class FinnhubServiceTest {
                     () -> assertThat(stockSymbol.getType(), is("EQS")),
                     () -> assertThat(stockSymbol.getDescription(), is("TESLA INC"))
             );
-
         });
     }
 
