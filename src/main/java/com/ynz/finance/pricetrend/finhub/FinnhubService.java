@@ -26,13 +26,16 @@ public class FinnhubService implements Finnhub {
     @Value("${api-key}")
     private String apiKey;
 
+    @Value("${header.tokenKey}")
+    private String tokenHeaderKey;
+
     public FinnhubService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
     public List<StockSymbol> getAllUSStockSymbol() {
         MultiValueMap<String, String> headers = new HttpHeaders();
-        headers.add("X-Finnhub-Token", apiKey);
+        headers.add(tokenHeaderKey, apiKey);
         ResponseEntity<StockSymbol[]> response = restTemplate.exchange(USStockSymbolsURL, HttpMethod.GET, new HttpEntity<>(headers), StockSymbol[].class);
         return Arrays.asList(response.getBody());
     }

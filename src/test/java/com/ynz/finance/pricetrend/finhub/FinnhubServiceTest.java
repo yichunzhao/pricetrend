@@ -2,6 +2,7 @@ package com.ynz.finance.pricetrend.finhub;
 
 import com.ynz.finance.pricetrend.domain.Symbol;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,7 +24,8 @@ class FinnhubServiceTest {
     private FinnhubService finnhubService;
 
     @Test
-    void getUSStockSymbol() {
+    @DisplayName("Get all US stock symbols in a list")
+    void testGetAllUSStockSymbolInList() {
         List<StockSymbol> stockSymbols = finnhubService.getAllUSStockSymbol();
         assertThat(stockSymbols, not(empty()));
         log.info("the size of US stock symbols: " + stockSymbols.size());
@@ -40,6 +42,7 @@ class FinnhubServiceTest {
     }
 
     @Test
+    @DisplayName("Get All US in Symbol-StockSymbol map")
     void testGetAllUSStockSymbols() {
         Map<Symbol, StockSymbol> symbolMap = finnhubService.getUSSymbolStockMap();
         List<StockSymbol> stockSymbolList = finnhubService.getAllUSStockSymbol();
