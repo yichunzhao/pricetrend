@@ -38,6 +38,7 @@ public class YahooFinanceApis implements FianceAPI {
             e.printStackTrace();
         }
         if (historicalQuotes != null && !historicalQuotes.isEmpty()) {
+
             HistoricalQuote start = historicalQuotes.get(0);
             HistoricalQuote end = historicalQuotes.get(historicalQuotes.size() - 1);
 

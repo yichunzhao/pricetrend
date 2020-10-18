@@ -11,11 +11,13 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
-import java.util.NavigableMap;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
 @Service
@@ -24,17 +26,20 @@ public class StockServiceImpl implements StockServices {
     protected final FianceAPI yahooFinanceApis;
 
     @Override
-    public Map<BigDecimal, Symbol> calMaxPriceGrowthStock(Set<Symbol> symbols, int limit) throws IOException {
+    public List<Map.Entry<Symbol, BigDecimal>> calUSStockMaxPriceGrowth(int limit) throws IOException {
         Map<Symbol, StockSymbol> stockSymbolMap = finnhub.getUSSymbolStockMap();
-        Set<Symbol> symbolSet = stockSymbolMap.keySet();
+        Set<Symbol> symbolSet = stockSymbolMap.keySet().stream().limit(20).collect(Collectors.toSet());
 
-        LocalDate from = LocalDate.now().minusDays(6L);
+        LocalDate from = LocalDate.now().minusMonths(6L);
+
+        //get prices from yahoo finance
         Map<Symbol, PriceSpanPair> symbolPriceSpanPairMap = yahooFinanceApis.getPricesBySymbols(symbolSet, from);
 
-        NavigableMap<BigDecimal, Symbol> symbolBigDecimalMap = symbolPriceSpanPairMap.entrySet()
-                .stream()
-                .collect(Collectors.toMap(s -> calGrowth(s.getValue()), s -> s.getKey(), (o, n) -> n, TreeMap::new));
-        return symbolBigDecimalMap.descendingMap().entrySet().stream().limit(10).collect(Collectors.toMap(s -> s.getKey(), s -> s.getValue()));
+        Map<Symbol, BigDecimal> stockGrowthOverTime = symbolPriceSpanPairMap.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> calGrowth(entry.getValue())));
+
+        Comparator<Map.Entry<Symbol, BigDecimal>> comparator = Map.Entry.comparingByValue();
+        return stockGrowthOverTime.entrySet().stream().sorted(comparator.reversed()).limit(limit).collect(toList());
     }
 
     private BigDecimal calGrowth(PriceSpanPair pair) {
@@ -42,7 +47,7 @@ public class StockServiceImpl implements StockServices {
     }
 
     @Override
-    public Map<BigDecimal, Symbol> calMaxPriceGrowthStock(Set<Symbol> symbols, LocalDate from, int limit) {
+    public List<Map.Entry<Symbol, BigDecimal>> calUSStockMaxPriceGrowth(LocalDate from, int limit) {
         return null;
     }
 }
