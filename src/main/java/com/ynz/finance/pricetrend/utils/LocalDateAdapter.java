@@ -3,7 +3,9 @@ package com.ynz.finance.pricetrend.utils;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Calendar;
+import java.util.Date;
 
 @RequiredArgsConstructor(staticName = "of")
 public class LocalDateAdapter implements AsCalendar {
@@ -13,8 +15,10 @@ public class LocalDateAdapter implements AsCalendar {
     public Calendar toCalendar() {
         if (localDate == null) throw new IllegalArgumentException("localDate should not be a null value");
         Calendar calendar = Calendar.getInstance();
-        calendar.clear();
-        calendar.set(localDate.getYear(), localDate.getMonthValue(), localDate.getDayOfMonth());
+
+        Date date = Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+        calendar.setTime(date);
+
         return calendar;
     }
 }

@@ -1,5 +1,6 @@
 package com.ynz.finance.pricetrend.service;
 
+import com.ynz.finance.pricetrend.utils.CalendarAdapter;
 import com.ynz.finance.pricetrend.utils.LocalDateAdapter;
 import org.springframework.stereotype.Service;
 import yahoofinance.Stock;
@@ -23,24 +24,46 @@ public class Cal233DayAveragePrice {
     private static final int preCount = 20 + 1;
     private static final int dayOfAverage = 233;
 
-    public List<HistoricalQuote> getStockOneYearBefore(String stock, LocalDate startDate) {
-        DayOfWeek dayOfWeek = startDate.getDayOfWeek();
+    public List<HistoricalQuote> getStockOneYearBefore(String stock, LocalDate refDate) {
+        DayOfWeek dayOfWeek = refDate.getDayOfWeek();
         if (dayOfWeek.equals(DayOfWeek.SATURDAY) || dayOfWeek.equals(DayOfWeek.SUNDAY)) {
-            throw new IllegalArgumentException("weekend is not valid reference day.");
+            throw new IllegalArgumentException("weekend is not a valid reference day.");
         }
 
         List<HistoricalQuote> historicalQuotes = null;
 
         try {
-            Stock found = YahooFinance.get(stock);
-            Calendar calendar = LocalDateAdapter.of(startDate.minus(15, ChronoUnit.MONTHS)).toCalendar();
-            historicalQuotes = found.getHistory(calendar, Interval.DAILY);
+            //Stock found = YahooFinance.get(stock);
+            //Calendar calendar = LocalDateAdapter.of(refDate.minus(15, ChronoUnit.MONTHS)).toCalendar();
+            Calendar from = LocalDateAdapter.of(determineFirstDayOfDataSet(refDate)).toCalendar();
+            Calendar to = LocalDateAdapter.of(refDate).toCalendar();
+            Stock found = YahooFinance.get(stock, from, to, Interval.DAILY);
+
+            historicalQuotes = found.getHistory(from, to, Interval.DAILY);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         return historicalQuotes;
+    }
+
+
+    public LocalDate determineFirstDayOfDataSet(LocalDate refDate) {
+        List<HistoricalQuote> historicalQuotes = null;
+        try {
+            Stock found = YahooFinance.get("tdy");
+            Calendar calendar = LocalDateAdapter.of(refDate.minus(15, ChronoUnit.MONTHS)).toCalendar();
+            historicalQuotes = found.getHistory(calendar, Interval.DAILY);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        int size = historicalQuotes.size();
+        List<HistoricalQuote> partOfQuotes = historicalQuotes.subList(size - preCount - dayOfAverage, size - 1);
+
+        return CalendarAdapter.of(partOfQuotes.get(0).getDate()).toLocalDate();
     }
 
     public List<HistoricalQuote> get20DaysBeforeLastDay(List<HistoricalQuote> historicalQuotes) {
@@ -77,6 +100,7 @@ public class Cal233DayAveragePrice {
         Map<HistoricalQuote, Double> average20Days = cal20Days233Average(historicalQuotes);
 
         List<Double> averages = average20Days.values().stream().collect(Collectors.toList());
+
         int size = averages.size();
         return averages.get(0) < averages.get(size - 1);
     }

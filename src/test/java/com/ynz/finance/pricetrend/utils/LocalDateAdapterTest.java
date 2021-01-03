@@ -1,5 +1,6 @@
 package com.ynz.finance.pricetrend.utils;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -21,7 +22,7 @@ class LocalDateAdapterTest {
 
         assertAll(
                 () -> assertThat(converted.get(Calendar.YEAR), is(year)),
-                () -> assertThat(converted.get(Calendar.MONTH), is(month)),
+                () -> assertThat(converted.get(Calendar.MONTH), is(Calendar.OCTOBER)),
                 () -> assertThat(converted.get(Calendar.DAY_OF_MONTH), is(day))
         );
     }
@@ -29,5 +30,19 @@ class LocalDateAdapterTest {
     @Test
     void of() {
         assertThat(LocalDateAdapter.of(LocalDate.of(year, month, day)), is(instanceOf(LocalDateAdapter.class)));
+    }
+
+    //LocalDate.of(2019, 12, 31)
+
+    @Test
+    @Disabled
+    void LocalDateToCalendar(){
+        Calendar converted = LocalDateAdapter.of(LocalDate.of(2019, 12, 31)).toCalendar();
+        assertAll(
+                () -> assertThat(converted.get(Calendar.YEAR), is(2019)),
+                () -> assertThat(converted.get(Calendar.MONTH), is(Calendar.DECEMBER)),
+                () -> assertThat(converted.get(Calendar.DAY_OF_MONTH), is(31))
+        );
+
     }
 }
