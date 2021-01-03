@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data(staticConstructor = "of")
-@Setter(AccessLevel.NONE)
 public class Price {
     private final BigDecimal stockPrice;
     private final LocalDate date;

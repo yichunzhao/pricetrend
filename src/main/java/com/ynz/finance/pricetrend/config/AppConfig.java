@@ -1,4 +1,4 @@
-package com.ynz.finance.pricetrend;
+package com.ynz.finance.pricetrend.config;
 
 
 import org.springframework.context.annotation.Bean;

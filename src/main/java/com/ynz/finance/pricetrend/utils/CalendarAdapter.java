@@ -12,6 +12,6 @@ public class CalendarAdapter implements AsLocalDate {
     @Override
     public LocalDate toLocalDate() {
         if (calendar == null) throw new IllegalArgumentException("calendar should not be a null value");
-        return LocalDate.of(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+        return calendar.getTime().toInstant().atZone(calendar.getTimeZone().toZoneId()).toLocalDate();
     }
 }

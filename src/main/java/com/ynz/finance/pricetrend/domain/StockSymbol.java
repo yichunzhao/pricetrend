@@ -1,4 +1,4 @@
-package com.ynz.finance.pricetrend.finhub;
+package com.ynz.finance.pricetrend.domain;
 
 import lombok.Data;
 
@@ -9,4 +9,6 @@ public class StockSymbol {
     private String symbol;
     private String type;
     private String currency;
+    private String figi;
+    private String mic;
 }

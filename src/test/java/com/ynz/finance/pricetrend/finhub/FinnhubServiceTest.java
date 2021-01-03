@@ -1,5 +1,6 @@
 package com.ynz.finance.pricetrend.finhub;
 
+import com.ynz.finance.pricetrend.domain.StockSymbol;
 import com.ynz.finance.pricetrend.domain.Symbol;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +14,7 @@ import java.util.Map;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -47,6 +49,14 @@ class FinnhubServiceTest {
         Map<Symbol, StockSymbol> symbolMap = finnhubService.getUSSymbolStockMap();
         List<StockSymbol> stockSymbolList = finnhubService.getAllUSStockSymbol();
         assertThat(symbolMap.size(), is(equalTo(stockSymbolList.size())));
+    }
+
+    @Test
+    @DisplayName("Get Nasdaq stock tickers")
+    void testGetNasdaqStockSymbols() {
+        Map<Symbol, StockSymbol> symbolMap = finnhubService.getAllNasdaqStocks();
+        assertThat(symbolMap.size(), is(greaterThan(100)));
+        System.out.println("symbol size: " + symbolMap.size());
     }
 
 }

@@ -1,9 +1,9 @@
 package com.ynz.finance.pricetrend.service;
 
 import com.ynz.finance.pricetrend.domain.PriceSpanPair;
+import com.ynz.finance.pricetrend.domain.StockSymbol;
 import com.ynz.finance.pricetrend.domain.Symbol;
 import com.ynz.finance.pricetrend.finhub.Finnhub;
-import com.ynz.finance.pricetrend.finhub.StockSymbol;
 import com.ynz.finance.pricetrend.yahoofinance.FianceAPI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,7 @@ public class StockServiceImpl implements StockServices {
     @Override
     public List<Map.Entry<Symbol, BigDecimal>> calUSStockMaxPriceGrowth(int limit) throws IOException {
         Map<Symbol, StockSymbol> stockSymbolMap = finnhub.getUSSymbolStockMap();
-        Set<Symbol> symbolSet = stockSymbolMap.keySet().stream().limit(20).collect(Collectors.toSet());
+        Set<Symbol> symbolSet = stockSymbolMap.keySet().stream().limit(100).collect(Collectors.toSet());
 
         LocalDate from = LocalDate.now().minusMonths(6L);
 
@@ -50,4 +50,5 @@ public class StockServiceImpl implements StockServices {
     public List<Map.Entry<Symbol, BigDecimal>> calUSStockMaxPriceGrowth(LocalDate from, int limit) {
         return null;
     }
+
 }
