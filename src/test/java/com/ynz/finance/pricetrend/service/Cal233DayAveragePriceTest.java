@@ -17,7 +17,6 @@ class Cal233DayAveragePriceTest {
 
     @Test
     void getStockOneYearBefore() {
-
         List<HistoricalQuote> historicalQuotes = averagePrice.getStockOneYearBefore("tdy", LocalDate.of(2020, 12, 31));
         assertThat(historicalQuotes.size(), is(254));
     }

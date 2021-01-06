@@ -38,9 +38,9 @@ public class Cal233DayAveragePrice {
             Calendar from = LocalDateAdapter.of(determineFirstDayOfDataSet(refDate)).toCalendar();
             Calendar to = LocalDateAdapter.of(refDate).toCalendar();
             Stock found = YahooFinance.get(stock, from, to, Interval.DAILY);
+            if (found == null) return null;
 
             historicalQuotes = found.getHistory(from, to, Interval.DAILY);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
