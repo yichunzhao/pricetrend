@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -20,6 +21,7 @@ public class NasdaqStock {
     @Setter(AccessLevel.NONE)
     private Integer id;
 
+    @Column(unique = true)
     private String symbol;
     private String securityName;
     private String marketCategory;
@@ -29,4 +31,6 @@ public class NasdaqStock {
     private String eTF;
     private String nextShares;
 
+    private Boolean dataNotEnough;
+    private Boolean is20Day233AvgIncremental;
 }

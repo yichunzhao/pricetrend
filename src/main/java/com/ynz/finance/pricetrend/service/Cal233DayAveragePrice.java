@@ -2,6 +2,7 @@ package com.ynz.finance.pricetrend.service;
 
 import com.ynz.finance.pricetrend.utils.CalendarAdapter;
 import com.ynz.finance.pricetrend.utils.LocalDateAdapter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
@@ -13,6 +14,7 @@ import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class Cal233DayAveragePrice {
     private static final int preCount = 20 + 1;
     private static final int dayOfAverage = 233;
@@ -34,30 +37,29 @@ public class Cal233DayAveragePrice {
 
         try {
             //Stock found = YahooFinance.get(stock);
-            //Calendar calendar = LocalDateAdapter.of(refDate.minus(15, ChronoUnit.MONTHS)).toCalendar();
-            Calendar from = LocalDateAdapter.of(determineFirstDayOfDataSet(refDate)).toCalendar();
+            Calendar from = LocalDateAdapter.of(refDate.minus(13, ChronoUnit.MONTHS)).toCalendar();
+            //Calendar from = LocalDateAdapter.of(determineFirstDayOfDataSet(refDate)).toCalendar();
             Calendar to = LocalDateAdapter.of(refDate).toCalendar();
             Stock found = YahooFinance.get(stock, from, to, Interval.DAILY);
             if (found == null) return null;
 
             historicalQuotes = found.getHistory(from, to, Interval.DAILY);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("method: getStockOneYearBefore", e);
         }
 
         return historicalQuotes;
     }
 
-
     public LocalDate determineFirstDayOfDataSet(LocalDate refDate) {
         List<HistoricalQuote> historicalQuotes = null;
         try {
             Stock found = YahooFinance.get("tdy");
-            Calendar calendar = LocalDateAdapter.of(refDate.minus(15, ChronoUnit.MONTHS)).toCalendar();
+            Calendar calendar = LocalDateAdapter.of(refDate.minus(13, ChronoUnit.MONTHS)).toCalendar();
             historicalQuotes = found.getHistory(calendar, Interval.DAILY);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("method: determineFirstDayOfDataSet ", e);
         }
 
         int size = historicalQuotes.size();
@@ -95,15 +97,13 @@ public class Cal233DayAveragePrice {
     }
 
     public boolean isIncremental(String stock, LocalDate startDate) {
-
         List<HistoricalQuote> historicalQuotes = getStockOneYearBefore(stock, startDate);
         Map<HistoricalQuote, Double> average20Days = cal20Days233Average(historicalQuotes);
 
-        List<Double> averages = average20Days.values().stream().collect(Collectors.toList());
+        List<Double> averages = new ArrayList<>(average20Days.values());
 
         int size = averages.size();
         return averages.get(0) < averages.get(size - 1);
     }
-
 
 }
