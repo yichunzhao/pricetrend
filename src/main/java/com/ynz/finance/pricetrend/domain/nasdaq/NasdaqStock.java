@@ -33,4 +33,17 @@ public class NasdaqStock {
 
     private Boolean dataNotEnough;
     private Boolean is20Day233AvgIncremental;
+
+    public String toPlainText() {
+        StringBuilder sb = new StringBuilder(symbol);
+        sb.append(",").append(securityName);
+        sb.append(",").append(marketCategory);
+        sb.append(",").append(testIssue);
+        sb.append(",").append(financialStatus);
+        sb.append(",").append(roundLotSize);
+        sb.append(",").append(eTF);
+        sb.append(",").append(nextShares);
+        sb.append("\n");
+        return sb.toString();
+    }
 }

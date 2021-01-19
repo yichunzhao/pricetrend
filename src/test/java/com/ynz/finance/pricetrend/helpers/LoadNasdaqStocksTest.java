@@ -3,6 +3,11 @@ package com.ynz.finance.pricetrend.helpers;
 import com.ynz.finance.pricetrend.domain.nasdaq.NasdaqStock;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -26,6 +31,26 @@ class LoadNasdaqStocksTest {
                 () -> assertThat(stocks.get(1).getSymbol(), is("AACQ")),
                 () -> assertThat(stocks.get(stocks.size() - 1).getSymbol(), is("ZYXI"))
         );
+    }
+
+    @Test
+    void printIntoExcelFile() {
+        List<NasdaqStock> stocks = loadNasdaqStocks.doAction();
+        File nasdaqStocksPlainTextFile = null;
+        try {
+            Files.deleteIfExists(Paths.get("nasdaqStocks.txt"));
+
+            nasdaqStocksPlainTextFile = new File("nasdaqStocks.txt");
+
+            FileWriter writer = new FileWriter(nasdaqStocksPlainTextFile);
+            for (NasdaqStock stock : stocks) {
+                writer.write(stock.toPlainText());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        assertThat(nasdaqStocksPlainTextFile.length(), is(greaterThan(0L)));
     }
 
 }

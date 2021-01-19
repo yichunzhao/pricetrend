@@ -40,15 +40,14 @@ public class InitDatabase implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        log.info("populating Nasdaq stocks into database");
-
         if (initStocks) {
+            log.info("populating Nasdaq stocks into database");
             List<NasdaqStock> nasdaqStocksList = loadNasdaqStocks.doAction();
             stocksRepository.saveAll(nasdaqStocksList);
         }
 
         if (initHistory) {
-
+            log.info("populating Nasdaq stocks History into database");
             List<String> stocks = stocksRepository.findAllSymbols();
 
             for (String stock : stocks) {
