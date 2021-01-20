@@ -1,6 +1,7 @@
 package com.ynz.finance.pricetrend.front;
 
 import com.ynz.finance.pricetrend.domain.nasdaq.NasdaqStock;
+import com.ynz.finance.pricetrend.helpers.LoadNasdaqStocks;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -15,9 +16,9 @@ import javafx.stage.Stage;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
 
 
 @Component
@@ -59,21 +60,44 @@ public class FXPriceChart extends Application {
         TreeTableColumn<NasdaqStock, String> columnMarketCategory = new TreeTableColumn<>("marketCategory");
         TreeTableColumn<NasdaqStock, String> columnETF = new TreeTableColumn<>("etf");
 
-        columnTicker.setCellValueFactory(new TreeItemPropertyValueFactory<>("brand"));
-        columnSecurity.setCellValueFactory(new TreeItemPropertyValueFactory<>("security"));
+        columnTicker.setCellValueFactory(new TreeItemPropertyValueFactory<>("symbol"));
+        columnSecurity.setCellValueFactory(new TreeItemPropertyValueFactory<>("securityName"));
         columnMarketCategory.setCellValueFactory(new TreeItemPropertyValueFactory<>("marketCategory"));
         columnETF.setCellValueFactory(new TreeItemPropertyValueFactory<>("eTF"));
 
         treeTableView.getColumns().addAll(Arrays.asList(columnTicker, columnSecurity, columnMarketCategory, columnETF));
 
+        TreeItem<NasdaqStock> rootTreeItem = prepareTreeTableData(new LoadNasdaqStocks().groupBySymbol());
+        treeTableView.setRoot(rootTreeItem);
+
         return treeTableView;
     }
 
-    private List<TreeItem<TreeItem>> prepareTreeTableViewData() {
-        List<TreeItem<TreeItem>> treeItems = new ArrayList<>();
+    private TreeItem<NasdaqStock> prepareTreeTableData(Map<Character, TreeSet<NasdaqStock>> characterTreeSetMap) {
 
+        NasdaqStock root = NasdaqStock.builder().symbol("Stocks").eTF("").financialStatus("").marketCategory("")
+                .nextShares("").roundLotSize("").securityName("").testIssue("").build();
 
-        return treeItems;
+        //root item
+        TreeItem<NasdaqStock> rootItem = new TreeItem<>(root);
+
+        //for each initial (A->Z)
+        for (Character initial : characterTreeSetMap.keySet()) {
+            NasdaqStock initialItem = NasdaqStock.builder().symbol(initial.toString()).eTF("").financialStatus("")
+                    .marketCategory("").nextShares("").roundLotSize("").securityName("").testIssue("").build();
+
+            TreeItem<NasdaqStock> initialTreeItem = new TreeItem<>(initialItem);
+            rootItem.getChildren().add(initialTreeItem);
+
+            //for each stocks having this initial
+            TreeSet<NasdaqStock> stocks = characterTreeSetMap.get(initial);
+            for (NasdaqStock s : stocks) {
+                TreeItem<NasdaqStock> stockTreeItem = new TreeItem<>(s);
+                initialTreeItem.getChildren().add(stockTreeItem);
+            }
+        }
+
+        return rootItem;
     }
 
     public static void main(String[] args) {

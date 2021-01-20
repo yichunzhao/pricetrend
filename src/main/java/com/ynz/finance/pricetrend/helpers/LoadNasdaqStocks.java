@@ -1,6 +1,7 @@
 package com.ynz.finance.pricetrend.helpers;
 
 import com.ynz.finance.pricetrend.domain.nasdaq.NasdaqStock;
+import javafx.scene.control.TreeItem;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -9,6 +10,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 @Component
 public class LoadNasdaqStocks {
@@ -71,5 +75,12 @@ public class LoadNasdaqStocks {
 
         return stocks;
     }
+
+    public Map<Character, TreeSet<NasdaqStock>> groupBySymbol() {
+        List<NasdaqStock> stocks = this.doAction();
+        return stocks.stream()
+                .collect(Collectors.groupingBy(nasdaqStock -> nasdaqStock.getSymbol().charAt(0), Collectors.toCollection(TreeSet::new)));
+    }
+
 
 }

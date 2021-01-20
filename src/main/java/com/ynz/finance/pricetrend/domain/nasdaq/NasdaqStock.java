@@ -1,6 +1,8 @@
 package com.ynz.finance.pricetrend.domain.nasdaq;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,7 +16,7 @@ import javax.persistence.Table;
 @Table(name = "NASDAQ_STOCKS")
 @Getter
 @Setter
-public class NasdaqStock {
+public class NasdaqStock implements Comparable<NasdaqStock> {
 
     @Id
     @GeneratedValue
@@ -34,6 +36,21 @@ public class NasdaqStock {
     private Boolean dataNotEnough;
     private Boolean is20Day233AvgIncremental;
 
+    public NasdaqStock() {
+    }
+
+    @Builder
+    public NasdaqStock(String symbol, String securityName, String marketCategory, String testIssue, String financialStatus, String roundLotSize, String eTF, String nextShares) {
+        this.symbol = symbol;
+        this.securityName = securityName;
+        this.marketCategory = marketCategory;
+        this.testIssue = testIssue;
+        this.financialStatus = financialStatus;
+        this.roundLotSize = roundLotSize;
+        this.eTF = eTF;
+        this.nextShares = nextShares;
+    }
+
     public String toPlainText() {
         StringBuilder sb = new StringBuilder(symbol);
         sb.append(",").append(securityName);
@@ -45,5 +62,10 @@ public class NasdaqStock {
         sb.append(",").append(nextShares);
         sb.append("\n");
         return sb.toString();
+    }
+
+    @Override
+    public int compareTo(NasdaqStock nasdaqStock) {
+        return getSymbol().compareTo(nasdaqStock.getSymbol());
     }
 }

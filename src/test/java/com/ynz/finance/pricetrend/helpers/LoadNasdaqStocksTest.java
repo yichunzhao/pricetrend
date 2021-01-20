@@ -9,11 +9,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 class LoadNasdaqStocksTest {
@@ -51,6 +54,13 @@ class LoadNasdaqStocksTest {
         }
 
         assertThat(nasdaqStocksPlainTextFile.length(), is(greaterThan(0L)));
+    }
+
+    @Test
+    void groupStocksBySymbol() {
+        Map<Character, TreeSet<NasdaqStock>> groupStocks = loadNasdaqStocks.groupBySymbol();
+        assertThat(groupStocks.size(),is(greaterThan(20)));
+        assertThat(groupStocks.size(),is(lessThanOrEqualTo(26)));
     }
 
 }
