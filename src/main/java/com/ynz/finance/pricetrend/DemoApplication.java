@@ -1,6 +1,6 @@
 package com.ynz.finance.pricetrend;
 
-import com.ynz.finance.pricetrend.front.FXPriceChart;
+import com.ynz.finance.pricetrend.front.StockSelectionWindow;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
@@ -16,7 +16,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class DemoApplication extends Application {
     private ConfigurableApplicationContext applicationContext;
 
-    private FXPriceChart fxPriceChart;
+    private StockSelectionWindow fxPriceChart;
 
     @Override
     public void init() throws Exception {
@@ -29,7 +29,7 @@ public class DemoApplication extends Application {
         log.info("Application.start() is invoked");
         Label label = new Label("hello Spring boot");
 
-        fxPriceChart = applicationContext.getBean(FXPriceChart.class);
+        fxPriceChart = applicationContext.getBean(StockSelectionWindow.class);
 
         //stage.setScene(new Scene(label));
         stage.setScene(fxPriceChart.createStockScene());
@@ -38,7 +38,7 @@ public class DemoApplication extends Application {
     }
 
     @Autowired
-    public void setFxPriceChart(FXPriceChart fxPriceChart) {
+    public void setFxPriceChart(StockSelectionWindow fxPriceChart) {
         this.fxPriceChart = fxPriceChart;
     }
 

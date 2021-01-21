@@ -4,6 +4,7 @@ import com.ynz.finance.pricetrend.domain.nasdaq.NasdaqStock;
 import com.ynz.finance.pricetrend.helpers.LoadNasdaqStocks;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
@@ -11,9 +12,12 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.NoArgsConstructor;
+import org.jfree.chart.fx.ChartViewer;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -23,7 +27,7 @@ import java.util.TreeSet;
 
 @Component
 @NoArgsConstructor
-public class FXPriceChart extends Application {
+public class StockSelectionWindow extends Application {
 
 
     @Override
@@ -41,13 +45,21 @@ public class FXPriceChart extends Application {
         ScrollPane scrollPane = new ScrollPane();
         //scrollPane.setContent(new Label("Nasdaq Stocks"));
         scrollPane.setContent(createTreeTableView());
+        scrollPane.setFitToHeight(true);
+        scrollPane.setFitToWidth(true);
 
         //right pane
-        VBox rightBox = new VBox();
-        rightBox.getChildren().add(new Label("right vertical box"));
+        //GridPane rightPane = createRightPane();
+        ChartViewer viewer = createPriceVolumeChartViewer("");
+        viewer.setManaged(true);
 
-        splitPane.getItems().addAll(scrollPane, rightBox);
-        //splitPane.setDividerPositions(0.2);
+        Pane pane = new Pane();
+        pane.getChildren().add(viewer);
+
+
+
+        splitPane.getItems().addAll(scrollPane, viewer);
+        splitPane.setDividerPositions(0.25);
 
         Scene scene = new Scene(splitPane, 1600, 800);
         return scene;
@@ -55,10 +67,13 @@ public class FXPriceChart extends Application {
 
     protected TreeTableView<NasdaqStock> createTreeTableView() {
         TreeTableView<NasdaqStock> treeTableView = new TreeTableView<>();
-        TreeTableColumn<NasdaqStock, String> columnTicker = new TreeTableColumn<>("symbol");
-        TreeTableColumn<NasdaqStock, String> columnSecurity = new TreeTableColumn<>("securityName");
-        TreeTableColumn<NasdaqStock, String> columnMarketCategory = new TreeTableColumn<>("marketCategory");
-        TreeTableColumn<NasdaqStock, String> columnETF = new TreeTableColumn<>("etf");
+        TreeTableColumn<NasdaqStock, String> columnTicker = new TreeTableColumn<>("Symbol");
+        columnTicker.setPrefWidth(150);
+        TreeTableColumn<NasdaqStock, String> columnSecurity = new TreeTableColumn<>("Security Name");
+        columnSecurity.setPrefWidth(500);
+        columnSecurity.setResizable(true);
+        TreeTableColumn<NasdaqStock, String> columnMarketCategory = new TreeTableColumn<>("Market Category");
+        TreeTableColumn<NasdaqStock, String> columnETF = new TreeTableColumn<>("ETF");
 
         columnTicker.setCellValueFactory(new TreeItemPropertyValueFactory<>("symbol"));
         columnSecurity.setCellValueFactory(new TreeItemPropertyValueFactory<>("securityName"));
@@ -70,6 +85,13 @@ public class FXPriceChart extends Application {
         TreeItem<NasdaqStock> rootTreeItem = prepareTreeTableData(new LoadNasdaqStocks().groupBySymbol());
         treeTableView.setRoot(rootTreeItem);
 
+        treeTableView.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> {
+                    System.out.println("newValue is instance of treeItem? " + (newValue instanceof TreeItem));
+                    System.out.println("Selected Text : " + newValue.getValue().getSymbol());
+                }
+        );
+
         return treeTableView;
     }
 
@@ -80,6 +102,7 @@ public class FXPriceChart extends Application {
 
         //root item
         TreeItem<NasdaqStock> rootItem = new TreeItem<>(root);
+        rootItem.setExpanded(true);
 
         //for each initial (A->Z)
         for (Character initial : characterTreeSetMap.keySet()) {
@@ -98,6 +121,50 @@ public class FXPriceChart extends Application {
         }
 
         return rootItem;
+    }
+
+    protected GridPane createRightPane() {
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(5);
+        gridPane.setVgap(5);
+
+        ChartViewer pvPlots = createPriceVolumeChartViewer("");
+
+        gridPane.add(pvPlots, 0, 0, 1, 1);
+        gridPane.add(new Label("hold a table here"), 0, 1, 1, 1);
+
+        return gridPane;
+    }
+
+    protected VBox createRightBox() {
+        VBox vBox = new VBox();
+        vBox.setSpacing(10);
+
+        PieChart pieChart = new PieChart();
+
+        PieChart.Data slice1 = new PieChart.Data("Desktop", 213);
+        PieChart.Data slice2 = new PieChart.Data("Phone", 67);
+        PieChart.Data slice3 = new PieChart.Data("Tablet", 36);
+
+        pieChart.getData().add(slice1);
+        pieChart.getData().add(slice2);
+        pieChart.getData().add(slice3);
+
+        ChartViewer pvPlots = createPriceVolumeChartViewer("");
+        vBox.getChildren().add(pieChart);
+        vBox.getChildren().add(pvPlots);
+
+        vBox.getChildren().add(new Label("hold a table here"));
+
+        return vBox;
+    }
+
+    protected ChartViewer createPriceVolumeChartViewer(String title) {
+        PriceVolumeCandleChart candleChart = new PriceVolumeCandleChart("");
+
+        ChartViewer viewer = new ChartViewer(candleChart.createPriceVolumeCombinedChart("price-volume"),true);
+
+        return viewer;
     }
 
     public static void main(String[] args) {
