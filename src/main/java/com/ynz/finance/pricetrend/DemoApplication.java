@@ -3,12 +3,10 @@ package com.ynz.finance.pricetrend;
 import com.ynz.finance.pricetrend.front.StockSelectionWindow;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
@@ -21,25 +19,21 @@ public class DemoApplication extends Application {
     @Override
     public void init() throws Exception {
         log.info("Application.init() is invoked");
-        applicationContext = SpringApplication.run(DemoApplication.class);
+
+        SpringApplicationBuilder builder = new SpringApplicationBuilder(DemoApplication.class);
+        builder.headless(false);
+        applicationContext = builder.run();
     }
 
     @Override
     public void start(Stage stage) throws Exception {
         log.info("Application.start() is invoked");
-        Label label = new Label("hello Spring boot");
 
         fxPriceChart = applicationContext.getBean(StockSelectionWindow.class);
 
-        //stage.setScene(new Scene(label));
         stage.setScene(fxPriceChart.createStockScene());
         stage.setTitle("Run FX from SpringBoot");
         stage.show();
-    }
-
-    @Autowired
-    public void setFxPriceChart(StockSelectionWindow fxPriceChart) {
-        this.fxPriceChart = fxPriceChart;
     }
 
     public static void main(String[] args) {

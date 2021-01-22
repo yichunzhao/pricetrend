@@ -29,7 +29,6 @@ import java.util.TreeSet;
 @NoArgsConstructor
 public class StockSelectionWindow extends Application {
 
-
     @Override
     public void start(Stage stage) throws Exception {
         stage.setScene(createStockScene());
@@ -139,7 +138,7 @@ public class StockSelectionWindow extends Application {
     }
 
     protected ChartViewer createPriceVolumeChartViewer(String title) {
-        PriceVolumeCandleChart candleChart = new PriceVolumeCandleChart("");
+        PriceVolumeCandleChart candleChart = new PriceVolumeCandleChart("yyy");
 
         ChartViewer viewer = new ChartViewer(candleChart.createPriceVolumeCombinedChart(title), true);
 
