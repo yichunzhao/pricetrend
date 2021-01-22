@@ -4,22 +4,22 @@ import com.ynz.finance.pricetrend.domain.nasdaq.NasdaqStock;
 import com.ynz.finance.pricetrend.helpers.LoadNasdaqStocks;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.chart.PieChart;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.NoArgsConstructor;
 import org.jfree.chart.fx.ChartViewer;
 import org.springframework.stereotype.Component;
 
+import java.awt.*;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeSet;
@@ -48,20 +48,22 @@ public class StockSelectionWindow extends Application {
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
 
-        //right pane
-        //GridPane rightPane = createRightPane();
-        ChartViewer viewer = createPriceVolumeChartViewer("");
-        viewer.setManaged(true);
+        //split pane: right pane
+        //top Node: a TabPane
+        TabPane tabPane = new TabPane();
 
-        Pane pane = new Pane();
-        pane.getChildren().add(viewer);
+        Tab tab1 = new Tab("price-volume", createRightBox());
+        tabPane.getTabs().addAll(tab1);
 
-
-
-        splitPane.getItems().addAll(scrollPane, viewer);
+        splitPane.getItems().addAll(scrollPane, tabPane);
         splitPane.setDividerPositions(0.25);
 
-        Scene scene = new Scene(splitPane, 1600, 800);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        double screenHeight = screenSize.getHeight();
+        double screenWidth = screenSize.getWidth();
+
+        Scene scene = new Scene(splitPane, screenWidth * 0.7, screenHeight * 0.7);
+
         return scene;
     }
 
@@ -123,38 +125,15 @@ public class StockSelectionWindow extends Application {
         return rootItem;
     }
 
-    protected GridPane createRightPane() {
-        GridPane gridPane = new GridPane();
-        gridPane.setHgap(5);
-        gridPane.setVgap(5);
-
-        ChartViewer pvPlots = createPriceVolumeChartViewer("");
-
-        gridPane.add(pvPlots, 0, 0, 1, 1);
-        gridPane.add(new Label("hold a table here"), 0, 1, 1, 1);
-
-        return gridPane;
-    }
-
     protected VBox createRightBox() {
         VBox vBox = new VBox();
         vBox.setSpacing(10);
 
-        PieChart pieChart = new PieChart();
+        ChartViewer pvPlots = createPriceVolumeChartViewer("price-volume plots");
+        pvPlots.setPrefHeight(600);
 
-        PieChart.Data slice1 = new PieChart.Data("Desktop", 213);
-        PieChart.Data slice2 = new PieChart.Data("Phone", 67);
-        PieChart.Data slice3 = new PieChart.Data("Tablet", 36);
-
-        pieChart.getData().add(slice1);
-        pieChart.getData().add(slice2);
-        pieChart.getData().add(slice3);
-
-        ChartViewer pvPlots = createPriceVolumeChartViewer("");
-        vBox.getChildren().add(pieChart);
         vBox.getChildren().add(pvPlots);
-
-        vBox.getChildren().add(new Label("hold a table here"));
+        vBox.getChildren().add(new Label("it will hold a table here"));
 
         return vBox;
     }
@@ -162,7 +141,7 @@ public class StockSelectionWindow extends Application {
     protected ChartViewer createPriceVolumeChartViewer(String title) {
         PriceVolumeCandleChart candleChart = new PriceVolumeCandleChart("");
 
-        ChartViewer viewer = new ChartViewer(candleChart.createPriceVolumeCombinedChart("price-volume"),true);
+        ChartViewer viewer = new ChartViewer(candleChart.createPriceVolumeCombinedChart(title), true);
 
         return viewer;
     }

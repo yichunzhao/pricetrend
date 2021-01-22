@@ -1,5 +1,6 @@
 package com.ynz.finance.pricetrend.front;
 
+import lombok.NoArgsConstructor;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
@@ -21,6 +22,7 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.IntStream;
+
 
 public class PriceVolumeCandleChart extends ApplicationFrame {
 
